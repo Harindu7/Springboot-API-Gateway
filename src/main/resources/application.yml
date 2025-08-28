@@ -1,48 +1,45 @@
 server:
-  port: 8082
+  port: ${SERVER_PORT:8082}   # Default to 8082 if env variable not set
 
 spring:
   application:
-    name: api-gateway
+    name: ${SPRING_APPLICATION_NAME:api-gateway}
+
   data:
     mongodb:
-      uri: mongodb://localhost:28017/userdb
-      auto-index-creation: true
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:28017/userdb}
+      auto-index-creation: ${SPRING_DATA_MONGODB_AUTO_INDEX_CREATION:true}
+
   cloud:
     gateway:
       server:
         webflux:
           routes:
-            - id: user-service
-              uri: http://localhost:8080
+            - id: ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_ID:user-service}
+              uri: ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_URI:http://localhost:8080}
               predicates:
-                - Path=/api/users/**
+                - ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_PREDICATES_0:Path=/api/users/**}
               filters:
-                - StripPrefix=2
-            - id: company-service
-              uri: http://localhost:8081
+                - ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_FILTERS_0:StripPrefix=2}
+            - id: ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_ID:company-service}
+              uri: ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_URI:http://localhost:8081}
               predicates:
-                - Path=/api/companies/**
+                - ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_PREDICATES_0:Path=/api/companies/**}
               filters:
-                - StripPrefix=2
+                - ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_FILTERS_0:StripPrefix=2}
           globalcors:
             cors-configurations:
               '[/**]':
-                allowedoriginpatterns: "*"
-                allowedmethods:
-                  - GET
-                  - POST
-                  - PUT
-                  - DELETE
-                  - OPTIONS
-                allowedheaders: "*"
-                allowcredentials: true
+                allowed-origin-patterns: ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_GLOBALCORS_CORS_CONFIGURATIONS___STAR___ALLOWEDORIGINPATTERNS:*}
+                allowed-methods: ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_GLOBALCORS_CORS_CONFIGURATIONS___STAR___ALLOWEDMETHODS:GET,POST,PUT,DELETE,OPTIONS,PATCH}
+                allowed-headers: ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_GLOBALCORS_CORS_CONFIGURATIONS___STAR___ALLOWEDHEADERS:*}
+                allow-credentials: ${SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_GLOBALCORS_CORS_CONFIGURATIONS___STAR___ALLOWCREDENTIALS:true}
 
 jwt:
-  secret: mySecretKey123456789012345678901234567890
-  expiration: 86400000 # 24 hours in milliseconds
+  secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}
+  expiration: ${JWT_EXPIRATION:86400000}  # default 24 hours
 
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_GATEWAY:DEBUG}
+    org.springframework.security: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY:DEBUG}
